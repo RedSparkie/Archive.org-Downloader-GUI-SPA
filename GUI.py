@@ -4,7 +4,9 @@ import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import ttk
 from tkinter import Menu
+from downloaderFunctions import *
 
+# gui commands
 def load_file():
     print("test")
 
@@ -20,11 +22,46 @@ def thread_settings_pressed():
 def paste_pressed():
     print("test")
 
+# downloads books from url 
 def start_download():
-    print(emailEntry.get())
+    email = emailEntry.get()
+    password = passwordEntry.get()
+    # get urls from box, remove last character (newline)
+    urls = urlText.get("1.0", tk.END+"-1c")
+
+    # login to site
+    session = login(email, password)
+    # get urls
+    book_id = list(filter(None, urls.split("/")))[-1]
+    print("="*40)
+    print(f"Current book: {urls}")
+    session = loan(session, book_id)
+    title, links = get_book_infos(session, urls)
+
+    directory = os.path.join(os.getcwd(), title)
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+
+    #tmp
+    n_threads = 50
+    scale = 3
+
+    images = download(session, n_threads, directory, links, scale, book_id)
+
+    pdf = img2pdf.convert(images)
+    make_pdf(pdf, title)
+    try:
+        shutil.rmtree(directory)
+    except OSError as e:
+        print ("Error: %s - %s." % (e.filename, e.strerror))
+
+    return_loan(session, book_id)
+
 
 def open_dl_location():
     print("test")
+
+#---------------------START OF WINDOW CREATION---------------------
 
 # initial window declaration
 window = tk.Tk()
