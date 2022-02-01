@@ -29,36 +29,58 @@ def start_download():
     n_threads = 50
     scale = 3
     isJPG = False
+
     # get urls from box, remove last character (newline)
     urls = urlText.get("1.0", tk.END+"-1c")
+    urls = parse_urls(urls)
 
-    # login to site
-    session = login(emailEntry.get(), passwordEntry.get())
-    # get urls
-    book_id = list(filter(None, urls.split("/")))[-1]
-    print("="*40)
-    print(f"Current book: {urls}")
-    session = loan(session, book_id)
-    title, links = get_book_infos(session, urls)
+    # Check the urls format
+    for url in urls:
+        if not url.startswith("https://archive.org/details/"):
+            error_msg("URL(s) Error", "Invalid URL(s). URL(s) must starts with: \nhttps://archive.org/details/")
+            return
 
-    directory = os.path.join(os.getcwd(), title)
-    if not os.path.isdir(directory):
-        os.makedirs(directory)
+    # Begin download process
+    for url in urls:
+        # login to site
+        session = login(emailEntry.get(), passwordEntry.get())
+        if session == 1:
+            error_msg("Login Error", "Invalid login credentials")
+            return
+        elif session == 2:
+            error_msg("Login Error", "Error with login")
+            return
 
-    # download book as jpgs
-    images = download(session, n_threads, directory, links, scale, book_id)
+        # get urls
+        book_id = list(filter(None, url.split("/")))[-1]
+        print("="*40)
+        print(f"Current book: {url}")
+        session = loan(session, book_id)
 
-    # converts book images to pdf
-    if isJPG == False:
-        pdf = img2pdf.convert(images)
-        make_pdf(pdf, title)
-        try:
-            shutil.rmtree(directory)
-        except OSError as e:
-            print ("Error: %s - %s." % (e.filename, e.strerror))
+        # gather book info
+        title, links = get_book_infos(session, url)
+        if title == 1:
+            error_msg("Book Error", "Error while getting image links")
+            return
 
-    # return loan for the downloaded book
-    return_loan(session, book_id)
+        directory = os.path.join(os.getcwd(), title)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
+
+        # download book as jpgs
+        images = download(session, n_threads, directory, links, scale, book_id)
+
+        # converts book images to pdf
+        if isJPG == False:
+            pdf = img2pdf.convert(images)
+            make_pdf(pdf, title)
+            try:
+                shutil.rmtree(directory)
+            except OSError as e:
+                print ("Error: %s - %s." % (e.filename, e.strerror))
+
+        # return loan for the downloaded book
+        return_loan(session, book_id)
 
 
 def open_dl_location():

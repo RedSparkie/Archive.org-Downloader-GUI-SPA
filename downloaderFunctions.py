@@ -26,11 +26,11 @@ def get_book_infos(session, url):
 			links.append(page['uri'])
 
 	if len(links) > 1:
-		print(f"[+] Found {len(links)} pages")
+		print("[+] Found {len(links)} pages")
 		return title, links
 	else:
-		print(f"[-] Error while getting image links")
-		exit()
+		print("[-] Error while getting image links")
+		return 1, 1
 
 def format_data(content_type, fields):
 	data = ""
@@ -50,7 +50,7 @@ def login(email, password):
 	response = session.post("https://archive.org/account/login", data=data, headers=headers)
 	if "bad_login" in response.text:
 		print("[-] Invalid credentials!")
-		exit()
+		return 1
 	elif "Successful login" in response.text:
 		print("[+] Successful login")
 		return session
@@ -58,7 +58,7 @@ def login(email, password):
 		print("[-] Error while login:")
 		print(response)
 		print(response.text)
-		exit()
+		return 2
 
 def loan(session, book_id, verbose=True):
 	data = {
@@ -146,3 +146,12 @@ def make_pdf(pdf, title):
 	with open(file,"wb") as f:
 		f.write(pdf)
 	print(f"[+] PDF saved as \"{title}.pdf\"")
+
+def parse_urls(urls):
+	url_list = []
+	url_list = urls.split("\n")
+	# remove excessive newlines in list
+	for url in url_list:
+		if len(url) == 0:
+			url_list.remove(url)
+	return url_list
