@@ -5,6 +5,7 @@ from tkinter import scrolledtext
 from tkinter import ttk
 from tkinter import Menu
 from downloaderFunctions import *
+from tkinter import messagebox
 
 # gui commands
 def load_file():
@@ -22,15 +23,17 @@ def thread_settings_pressed():
 def paste_pressed():
     print("test")
 
-# downloads books from url 
+# downloads books from url(s) given
 def start_download():
-    email = emailEntry.get()
-    password = passwordEntry.get()
+    #tmp
+    n_threads = 50
+    scale = 3
+    isJPG = False
     # get urls from box, remove last character (newline)
     urls = urlText.get("1.0", tk.END+"-1c")
 
     # login to site
-    session = login(email, password)
+    session = login(emailEntry.get(), passwordEntry.get())
     # get urls
     book_id = list(filter(None, urls.split("/")))[-1]
     print("="*40)
@@ -42,24 +45,29 @@ def start_download():
     if not os.path.isdir(directory):
         os.makedirs(directory)
 
-    #tmp
-    n_threads = 50
-    scale = 3
-
+    # download book as jpgs
     images = download(session, n_threads, directory, links, scale, book_id)
 
-    pdf = img2pdf.convert(images)
-    make_pdf(pdf, title)
-    try:
-        shutil.rmtree(directory)
-    except OSError as e:
-        print ("Error: %s - %s." % (e.filename, e.strerror))
+    # converts book images to pdf
+    if isJPG == False:
+        pdf = img2pdf.convert(images)
+        make_pdf(pdf, title)
+        try:
+            shutil.rmtree(directory)
+        except OSError as e:
+            print ("Error: %s - %s." % (e.filename, e.strerror))
 
+    # return loan for the downloaded book
     return_loan(session, book_id)
 
 
 def open_dl_location():
     print("test")
+    error_msg("ERROR", "test")
+
+# displays error messages to user
+def error_msg(title, message):
+    tk.messagebox.showwarning(title, message)
 
 #---------------------START OF WINDOW CREATION---------------------
 
