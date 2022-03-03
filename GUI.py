@@ -6,6 +6,7 @@ from tkinter import ttk
 from tkinter import Menu
 from downloaderFunctions import *
 from tkinter import messagebox
+import pyperclip as pc
 
 # gui commands
 def load_file():
@@ -15,13 +16,37 @@ def exit_pressed():
     print("test")
 
 def resolution_settings_pressed():
-    print("test")
+    top = tk.Toplevel(window)
+    top.geometry("300x150")
+    window.withdraw()
+
+    # resolution settings widgets
+    resolutionLabel = tk.Label(top, text="Set resolution settings\n(default: 3)")
+    resolutionLabel.pack(pady=10, side=tk.TOP)
+
+    resolutionEntry = tk.Entry(top, width=25)
+    resolutionEntry.pack(pady=5, side=tk.TOP)
+
+    resolutionButton = tk.Button(top, text="Ok", command=lambda:close_top(top))
+    resolutionButton.pack(pady=5, side=tk.TOP)
 
 def thread_settings_pressed():
-    print("test")
+    top = tk.Toplevel(window)
+    top.geometry("300x150")
+    window.withdraw()
+
+    # resolution settings widgets
+    threadLabel = tk.Label(top, text="Set thread settings\n(default: 50)")
+    threadLabel.pack(pady=10, side=tk.TOP)
+
+    threadEntry = tk.Entry(top, width=25)
+    threadEntry.pack(pady=5, side=tk.TOP)
+
+    threadButton = tk.Button(top, text="Ok", command=lambda:close_top(top))
+    threadButton.pack(pady=5, side=tk.TOP)
 
 def paste_pressed():
-    print("test")
+    urlText.insert(tk.INSERT, pc.paste())
 
 # downloads books from url(s) given
 def start_download():
@@ -32,6 +57,8 @@ def start_download():
 
     # get urls from box, remove last character (newline)
     urls = urlText.get("1.0", tk.END+"-1c")
+    if not urls:
+        error_msg("URL Error", "No URLs present")
     urls = parse_urls(urls)
 
     # Check the urls format
@@ -91,6 +118,12 @@ def open_dl_location():
 def error_msg(title, message):
     tk.messagebox.showwarning(title, message)
 
+# close the pop up window
+def close_top(top):
+    window.deiconify()
+    top.destroy()
+
+
 #---------------------START OF WINDOW CREATION---------------------
 
 # initial window declaration
@@ -98,7 +131,7 @@ window = tk.Tk()
 window.title("Archive.org-DLG")
 window.geometry("600x400")
 
-# menu declaration
+# menu declarations
 menu = tk.Menu(window)
 
 fileMenuElements = tk.Menu(menu)
@@ -151,5 +184,6 @@ openLocationButton = tk.Button(downloadFrame, text="Open Download Location", com
 openLocationButton.pack(side=tk.LEFT)
 progressBar = ttk.Progressbar(downloadFrame, orient=tk.HORIZONTAL, length=400)
 progressBar.pack(side=tk.LEFT, fill=tk.X)
+
 
 window.mainloop()
