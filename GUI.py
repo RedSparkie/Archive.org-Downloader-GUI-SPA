@@ -13,7 +13,7 @@ def load_file():
     print("test")
 
 def exit_pressed():
-    print("test")
+    close_window(window, "main_win", 0)
 
 def resolution_settings_pressed():
     top = tk.Toplevel(window)
@@ -27,7 +27,7 @@ def resolution_settings_pressed():
     resolutionEntry = tk.Entry(top, width=25)
     resolutionEntry.pack(pady=5, side=tk.TOP)
 
-    resolutionButton = tk.Button(top, text="Ok", command=lambda:close_top(top))
+    resolutionButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "res_settings", resolutionEntry.get()))
     resolutionButton.pack(pady=5, side=tk.TOP)
 
 def thread_settings_pressed():
@@ -42,7 +42,7 @@ def thread_settings_pressed():
     threadEntry = tk.Entry(top, width=25)
     threadEntry.pack(pady=5, side=tk.TOP)
 
-    threadButton = tk.Button(top, text="Ok", command=lambda:close_top(top))
+    threadButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "thread_settings", threadEntry.get()))
     threadButton.pack(pady=5, side=tk.TOP)
 
 def paste_pressed():
@@ -50,11 +50,6 @@ def paste_pressed():
 
 # downloads books from url(s) given
 def start_download():
-    #tmp
-    n_threads = 50
-    scale = 3
-    isJPG = False
-
     # get urls from box, remove last character (newline)
     urls = urlText.get("1.0", tk.END+"-1c")
     if not urls:
@@ -95,10 +90,10 @@ def start_download():
             os.makedirs(directory)
 
         # download book as jpgs
-        images = download(session, n_threads, directory, links, scale, book_id)
+        images = download(session, n_threads.get(), directory, links, scale.get(), book_id)
 
         # converts book images to pdf
-        if isJPG == False:
+        if isJPG.get() == False:
             pdf = img2pdf.convert(images)
             make_pdf(pdf, title)
             try:
@@ -109,7 +104,6 @@ def start_download():
         # return loan for the downloaded book
         return_loan(session, book_id)
 
-
 def open_dl_location():
     print("test")
     error_msg("ERROR", "test")
@@ -119,10 +113,22 @@ def error_msg(title, message):
     tk.messagebox.showwarning(title, message)
 
 # close the pop up window
-def close_top(top):
-    window.deiconify()
-    top.destroy()
+def close_window(win, win_specifier, value):
+    # save data inputted by user for settings windows
+    if win_specifier == "res_settings":
+        scale.set(value)
+    elif win_specifier == "thread_settings":
+        n_threads.set(value)
 
+    window.deiconify()
+    win.destroy()
+
+# manages jpg toggle button setting
+def jpg_toggled():
+    if isJPG.get() == True:
+        isJPG.set(False)
+    elif isJPG.get() == False:
+        isJPG.set(True)
 
 #---------------------START OF WINDOW CREATION---------------------
 
@@ -130,6 +136,11 @@ def close_top(top):
 window = tk.Tk()
 window.title("Archive.org-DLG")
 window.geometry("600x400")
+
+# download settings variables
+n_threads = tk.IntVar(window, value = 50)
+scale = tk.IntVar(window, value = 3)
+isJPG = tk.BooleanVar(window, False)
 
 # menu declarations
 menu = tk.Menu(window)
@@ -141,7 +152,7 @@ fileMenuElements.add_command(label="Exit", command=exit_pressed)
 menu.add_cascade(label="File", menu=fileMenuElements)
 
 optionsMenuElements = tk.Menu(menu)
-optionsMenuElements.add_checkbutton(label="Toggle JPG Download")
+optionsMenuElements.add_checkbutton(label="Toggle JPG Download", command=jpg_toggled)
 optionsMenuElements.add_separator()
 optionsMenuElements.add_command(label="Download Resolution Settings", command=resolution_settings_pressed)
 optionsMenuElements.add_command(label="Thread Settings", command=thread_settings_pressed)
