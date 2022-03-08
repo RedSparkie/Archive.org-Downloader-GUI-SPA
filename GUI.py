@@ -155,7 +155,7 @@ def jpg_toggled():
 
 # handles case where user exits program at settings windows
 def on_closing():
-    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    if messagebox.askokcancel("Exit", "Exit out of program?"):
         window.destroy()
 
 
@@ -199,7 +199,7 @@ loginFrame.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5, ipady=5)
 downloadFrame = tk.Frame(window, width=50, height=50)
 downloadFrame.pack(side=tk.BOTTOM, padx=5, pady=5)
 urlFrame = tk.LabelFrame(window, text="URL(s)", padx=5, pady=5, width=50, height=50)
-urlFrame.pack(side=tk.BOTTOM, fill=tk.BOTH, padx=5, pady=5)
+urlFrame.pack(expand=1, side=tk.BOTTOM, fill=tk.BOTH, padx=5, pady=5)
 
 # logins frame widgets
 emailLabel = tk.Label(loginFrame, text="Email: ")
@@ -215,7 +215,7 @@ passwordEntry.pack(side=tk.LEFT, fill=tk.X)
 pasteButton = tk.Button(urlFrame, text="Paste", command=paste_pressed)
 pasteButton.pack(side=tk.LEFT, fill=tk.Y)
 urlText = scrolledtext.ScrolledText(urlFrame, width=40, height=30)
-urlText.pack(side=tk.TOP, fill=tk.BOTH)
+urlText.pack(expand=1, side=tk.TOP, fill=tk.BOTH)
 
 # download frame widgets
 startButton = tk.Button(downloadFrame, text="Start Download", command=start_download)
