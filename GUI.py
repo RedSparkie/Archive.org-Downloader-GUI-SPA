@@ -4,17 +4,30 @@ import tkinter as tk
 from tkinter import scrolledtext
 from tkinter import ttk
 from tkinter import Menu
-from downloaderFunctions import *
 from tkinter import messagebox
+from tkinter import filedialog
 import pyperclip as pc
+import os
+import subprocess, sys
+from downloaderFunctions import *
 
-# gui commands
+#---------------------START OF GUI COMMANDS---------------------
+
+# load a text file into the url textbox
 def load_file():
-    print("test")
+    filename = ""
+    if sys.platform.startswith('linux'):
+        filename = filedialog.askopenfilename(initialdir = "/home", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+    elif sys.platform.startswith('win32'):
+        filename = filedialog.askopenfilename(initialdir = "C:", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+    file = open(filename)
+    urlText.insert(tk.INSERT, file.read())
 
+# close main window command
 def exit_pressed():
     close_window(window, "main_win", 0)
 
+# opens resolution settings window
 def resolution_settings_pressed():
     top = tk.Toplevel(window)
     top.geometry("300x150")
@@ -32,7 +45,7 @@ def resolution_settings_pressed():
 
     top.protocol("WM_DELETE_WINDOW", on_closing)
 
-
+# opens thread settings window
 def thread_settings_pressed():
     top = tk.Toplevel(window)
     top.geometry("300x150")
@@ -109,9 +122,14 @@ def start_download():
         # return loan for the downloaded book
         return_loan(session, book_id)
 
+# open file explorer at current download directory
 def open_dl_location():
-    print("test")
-    error_msg("ERROR", "test")
+    directory_path = os.getcwd()
+    #folder_name = os.path.basename(directory_path)
+    if sys.platform.startswith('linux'):
+        os.system("xdg-open " + directory_path)
+    elif sys.platform.startswith('win32'):
+        os.system("explorer.exe " + directory_path)
 
 # displays error messages to user
 def error_msg(title, message):
