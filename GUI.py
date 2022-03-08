@@ -30,6 +30,9 @@ def resolution_settings_pressed():
     resolutionButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "res_settings", resolutionEntry.get()))
     resolutionButton.pack(pady=5, side=tk.TOP)
 
+    top.protocol("WM_DELETE_WINDOW", on_closing)
+
+
 def thread_settings_pressed():
     top = tk.Toplevel(window)
     top.geometry("300x150")
@@ -44,6 +47,8 @@ def thread_settings_pressed():
 
     threadButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "thread_settings", threadEntry.get()))
     threadButton.pack(pady=5, side=tk.TOP)
+
+    top.protocol("WM_DELETE_WINDOW", on_closing)
 
 def paste_pressed():
     urlText.insert(tk.INSERT, pc.paste())
@@ -129,6 +134,12 @@ def jpg_toggled():
         isJPG.set(False)
     elif isJPG.get() == False:
         isJPG.set(True)
+
+# handles case where user exits program at settings windows
+def on_closing():
+    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        window.destroy()
+
 
 #---------------------START OF WINDOW CREATION---------------------
 
