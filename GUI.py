@@ -72,6 +72,7 @@ def start_download():
     urls = urlText.get("1.0", tk.END+"-1c")
     if not urls:
         error_msg("URL Error", "No URLs present")
+        return
     urls = parse_urls(urls)
 
     # Check the urls format
@@ -79,6 +80,9 @@ def start_download():
         if not url.startswith("https://archive.org/details/"):
             error_msg("URL(s) Error", "Invalid URL(s). URL(s) must starts with: \nhttps://archive.org/details/")
             return
+
+    # disable window when downloading
+    toggle_win_activity()
 
     # Begin download process
     for url in urls:
@@ -90,25 +94,35 @@ def start_download():
         elif session == 2:
             error_msg("Login Error", "Error with login")
             return
+        progressBar['value'] = 10
+        window.update()
 
         # get urls
         book_id = list(filter(None, url.split("/")))[-1]
         print("="*40)
         print(f"Current book: {url}")
         session = loan(session, book_id)
+        progressBar['value'] = 30
+        window.update()
 
         # gather book info
         title, links = get_book_infos(session, url)
         if title == 1:
             error_msg("Book Error", "Error while getting image links")
             return
+        progressBar['value'] = 50
+        window.update()
 
         directory = os.path.join(os.getcwd(), title)
         if not os.path.isdir(directory):
             os.makedirs(directory)
+        progressBar['value'] = 70
+        window.update()
 
         # download book as jpgs
         images = download(session, n_threads.get(), directory, links, scale.get(), book_id)
+        progressBar['value'] = 80
+        window.update()
 
         # converts book images to pdf
         if isJPG.get() == False:
@@ -121,6 +135,16 @@ def start_download():
 
         # return loan for the downloaded book
         return_loan(session, book_id)
+        progressBar['value'] = 100
+
+    # finished download message
+    result = tk.messagebox.askyesno(title="Download", message="Download Complete!\nOpen download location?")
+    if result:
+        open_dl_location()
+
+
+    # enable window once finished downloading
+    toggle_win_activity()
 
 # open file explorer at current download directory
 def open_dl_location():
@@ -157,6 +181,22 @@ def jpg_toggled():
 def on_closing():
     if messagebox.askokcancel("Exit", "Exit out of program?"):
         window.destroy()
+
+def toggle_win_activity():
+    if urlText['state'] == tk.NORMAL:
+        urlText['state'] = tk.DISABLED
+        pasteButton['state'] = tk.DISABLED
+        openLocationButton['state'] = tk.DISABLED
+        emailEntry['state'] = tk.DISABLED
+        passwordEntry['state'] = tk.DISABLED
+        startButton['state'] = tk.DISABLED
+    else:
+        urlText['state'] = tk.NORMAL
+        pasteButton['state'] = tk.NORMAL
+        openLocationButton['state'] = tk.NORMAL
+        emailEntry['state'] = tk.NORMAL
+        passwordEntry['state'] = tk.NORMAL
+        startButton['state'] = tk.NORMAL
 
 
 #---------------------START OF WINDOW CREATION---------------------
