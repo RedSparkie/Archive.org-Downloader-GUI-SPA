@@ -10,6 +10,7 @@ import pyperclip as pc
 import os
 import subprocess, sys
 from downloaderFunctions import *
+from concurrent import futures
 
 #---------------------START OF GUI COMMANDS---------------------
 
@@ -66,6 +67,22 @@ def thread_settings_pressed():
 def paste_pressed():
     urlText.insert(tk.INSERT, pc.paste())
 
+def download(session, n_threads, directory, links, scale, book_id):
+    print("Downloading pages...")
+    links = [f"{link}&rotate=0&scale={scale}" for link in links]
+
+    tasks = []
+    with futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
+        for link in links:
+            i = links.index(link)
+            tasks.append(executor.submit(download_one_image, session=session, link=link, i=i, directory=directory ,book_id=book_id))
+        for task in tqdm(futures.as_completed(tasks), total=len(tasks)):
+            progressBar.step()
+            window.update()
+
+    images = [f"{directory}/{i}.jpg" for i in range(len(links))]
+    return images
+
 # downloads books from url(s) given
 def start_download():
     # get urls from box, remove last character (newline)
@@ -83,6 +100,7 @@ def start_download():
 
     # disable window when downloading
     toggle_win_activity()
+    window.update()
 
     # Begin download process
     for url in urls:
@@ -94,35 +112,26 @@ def start_download():
         elif session == 2:
             error_msg("Login Error", "Error with login")
             return
-        progressBar['value'] = 10
-        window.update()
 
         # get urls
         book_id = list(filter(None, url.split("/")))[-1]
         print("="*40)
         print(f"Current book: {url}")
         session = loan(session, book_id)
-        progressBar['value'] = 30
-        window.update()
 
         # gather book info
-        title, links = get_book_infos(session, url)
+        title, links, progressBar['maximum'] = get_book_infos(session, url)
         if title == 1:
             error_msg("Book Error", "Error while getting image links")
             return
-        progressBar['value'] = 50
-        window.update()
 
         directory = os.path.join(os.getcwd(), title)
         if not os.path.isdir(directory):
             os.makedirs(directory)
-        progressBar['value'] = 70
         window.update()
 
         # download book as jpgs
         images = download(session, n_threads.get(), directory, links, scale.get(), book_id)
-        progressBar['value'] = 80
-        window.update()
 
         # converts book images to pdf
         if isJPG.get() == False:
@@ -135,7 +144,6 @@ def start_download():
 
         # return loan for the downloaded book
         return_loan(session, book_id)
-        progressBar['value'] = 100
 
     # finished download message
     result = tk.messagebox.askyesno(title="Download", message="Download Complete!\nOpen download location?")
@@ -262,7 +270,7 @@ startButton = tk.Button(downloadFrame, text="Start Download", command=start_down
 startButton.pack(side=tk.LEFT)
 openLocationButton = tk.Button(downloadFrame, text="Open Download Location", command=open_dl_location)
 openLocationButton.pack(side=tk.LEFT)
-progressBar = ttk.Progressbar(downloadFrame, orient=tk.HORIZONTAL, length=400)
+progressBar = ttk.Progressbar(downloadFrame, mode='determinate', orient=tk.HORIZONTAL, length=400)
 progressBar.pack(side=tk.LEFT, fill=tk.X)
 
 

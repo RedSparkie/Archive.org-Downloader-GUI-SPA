@@ -26,8 +26,8 @@ def get_book_infos(session, url):
 			links.append(page['uri'])
 
 	if len(links) > 1:
-		print("[+] Found {len(links)} pages")
-		return title, links
+		print(f"[+] Found {len(links)} pages")
+		return title, links, len(links)
 	else:
 		print("[-] Error while getting image links")
 		return 1, 1
@@ -118,22 +118,6 @@ def download_one_image(session, link, i, directory, book_id):
 	image = f"{directory}/{i}.jpg"
 	with open(image,"wb") as f:
 		f.write(response.content)
-
-
-def download(session, n_threads, directory, links, scale, book_id):
-	print("Downloading pages...")
-	links = [f"{link}&rotate=0&scale={scale}" for link in links]
-
-	tasks = []
-	with futures.ThreadPoolExecutor(max_workers=n_threads) as executor:
-		for link in links:
-			i = links.index(link)
-			tasks.append(executor.submit(download_one_image, session=session, link=link, i=i, directory=directory ,book_id=book_id))
-		for task in tqdm(futures.as_completed(tasks), total=len(tasks)):
-			pass
-
-	images = [f"{directory}/{i}.jpg" for i in range(len(links))]
-	return images
 
 def make_pdf(pdf, title):
 	file = title+".pdf"
