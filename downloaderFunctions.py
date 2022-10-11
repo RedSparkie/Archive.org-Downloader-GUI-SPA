@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import requests
 import random, string
 from concurrent import futures
@@ -14,7 +12,7 @@ import shutil
 
 def get_book_infos(session, url):
 	r = session.get(url).text
-	infos_url = "https:" + r[r.find('url:')+6 : r.find('type:')-21]
+	infos_url = "https:" + r.split('bookManifestUrl="')[1].split('"\n')[0]
 	response = session.get(infos_url)
 	data = response.json()['data']
 	title = data['brOptions']['bookTitle'].strip().replace(" ", "_")
