@@ -47,6 +47,7 @@ You should see a program pop up like the screenshot shown above. Now just input 
 
 The program comes with a couple of options taken from the original script. 
 ![Archive org_DL_GUI_options](https://user-images.githubusercontent.com/71157556/195453465-468005be-bb96-472d-bb40-d0e9dd66847f.png)
+
 These options are JPG download which makes the book download as a set of images, the download resolution of the book, and the amount of threads for downloading. Additionally, under `File` a text file with URLs can be loaded into the program.
 
 ## Creating an Executable
