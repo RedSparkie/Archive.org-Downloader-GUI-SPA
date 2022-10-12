@@ -9,7 +9,7 @@ from tkinter import filedialog
 import pyperclip as pc
 import os
 import subprocess, sys
-from downloaderFunctions import *
+from downloader_functions import *
 from concurrent import futures
 
 #---------------------START OF GUI COMMANDS---------------------
@@ -211,7 +211,7 @@ def toggle_win_activity():
 
 # initial window declaration
 window = tk.Tk()
-window.title("Archive.org-DLG")
+window.title("Archive.org-DL-GUI")
 window.geometry("600x400")
 
 # download settings variables
