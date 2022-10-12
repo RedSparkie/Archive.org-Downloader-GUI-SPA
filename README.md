@@ -1,70 +1,68 @@
-![made-with-python](https://img.shields.io/badge/Made%20with-Python3-brightgreen)
 
+![made-with-python](https://img.shields.io/badge/Made%20with-Python3-brightgreen)
 <!-- LOGO -->
 <br />
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/54740007/108192715-e5958c80-7114-11eb-8240-e884895bb45f.png" alt="Logo" width="80" height="80">
-
-  <h3 align="center">Archive.org-Downloader</h3>
-
-  <p align="center">
-    Python3 script to download archive.org books in PDF format !
-    <br />
-    </p>
+<p align="left">
+  <h1 align="center">Archive.org Downloader GUI</h1>
 </p>
 
+## About This Project
 
-## About The Project
+The site https://archive.org/ offers a selection of free books to view and some to download. However due to the current makeup of said site, some books can only be "borrowed" for a two week span at maximum. Others still are not available for download which limits offline reading. This program, which was forked from https://github.com/MiniGlome/Archive.org-Downloader that offered up the initial download script, offers a GUI experience to easily download books into PDF format.
 
-There are many great books available on https://openlibrary.org/ and https://archive.org/, however, you can only borrow them for 1 hour to 14 days and you don't have the option to download it as a PDF to read it offline or share it with your friends. I created this program to solve this problem and retrieve the original book in pdf format for FREE !
+### Screenshot
 
-Of course, the download takes a few minutes depending on the number of pages and the quality of the images you have selected. You must also create an account on https://archive.org/ for the script to work.
+![Archive org_DL_GUI](https://user-images.githubusercontent.com/71157556/195441576-e8eb9745-a713-4068-80d1-52f29058dc43.png)
+## Installation - Linux OS
 
+Python3 is required for this program to work: https://www.python.org/downloads/
+Or a command can be used to install on Debian: 
+```sh
+sudo apt install python3
+```
+Also install git with: 
+```sh
+sudo apt install git
+```
 
-## Getting Started
-To get started you need to have python3 installed. If it is not the case you can download it here : https://www.python.org/downloads/
-
-### Installation
-Make sure you've already git installed. Then you can run the following commands to get the scripts on your computer:
-   ```sh
-   git clone https://github.com/MiniGlome/Archive.org-Downloader.git
-   cd Archive.org-Downloader
-   ```
-The script requires the modules `requests`, `tqdm` and `img2pdf`, you can install them all at once with this command:
+### Clone Repository to Directory
+Then you can run the following commands to get the scripts on your computer:
+```sh
+git clone https://github.com/alobeep/Archive.org-Downloader-GUI
+cd Archive.org-Downloader-GUI
+```
+The program requires following python modules `requests`, `tqdm`, `img2pdf`, `tkinter`, and `pyperclip`. Install them all with pip:
 ```sh
 pip install -r requirements.txt
 ```
-   
-## Usage
-```sh
-usage: archive-org-downloader.py [-h] -e EMAIL -p PASSWORD [-u URL] [-f FILE] [-r RESOLUTION] [-t THREADS] [-j]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -e EMAIL, --email EMAIL
-                        Your archive.org email
-  -p PASSWORD, --password PASSWORD
-                        Your archive.org password
-  -u URL, --url URL     Link to the book (https://archive.org/details/XXXX). You can use this argument several times to download
-                        multiple books
-  -f FILE, --file FILE  File where are stored the URLs of the books to download
-  -r RESOLUTION, --resolution RESOLUTION
-                        Image resolution (10 to 0, 0 is the highest), [default 3]
-  -t THREADS, --threads THREADS
-                        Maximum number of threads, [default 50]
-  -j, --jpg             Output to individual JPG's rather then a PDF
+### Running the Program
+Now that everything is installed, to run the program you do the following command:
 ```
-The `email` and `password` fields are required, so to use this script you must have a registered account on archive.org.
-The `-r` argument specifies the resolution of the images (0 is the best quality).
-The PDF are downloaded in the current folder
+python3 archive_dl_gui.py 
+```
+You should see a program pop up like the screenshot shown above. Now just input your email and password, as well as the URLs of the books to be downloaded, from your archive.org account and begin downloading.
 
-### Example
-This command will download the 3 books as pdf in the best possible quality. To only downlaod the individual images you can use `--jpg`.
-```sh
-python3 archive-org-downloader.py -e myemail@tempmail.com -p Passw0rd -r 0 -u https://archive.org/details/IntermediatePython -u https://archive.org/details/horrorgamispooky0000bidd_m7r1 -u https://archive.org/details/elblabladelosge00gaut 
-```
+## Options
 
-If you want to download a lot of books in a raw you can paste the urls of the books in a .txt file (one per line) and use `--file`
-```sh
-python3 archive-org-downloader.py -e myemail@tempmail.com -p Passw0rd --file books_to_download.txt
+The program comes with a couple of options taken from the original script. 
+![Archive org_DL_GUI_options](https://user-images.githubusercontent.com/71157556/195453465-468005be-bb96-472d-bb40-d0e9dd66847f.png)
+These options are JPG download which makes the book download as a set of images, the download resolution of the book, and the amount of threads for downloading. Additionally, under `File` a text file with URLs can be loaded into the program.
+
+## Creating an Executable
+In order to avoid having to run the command every time you would want to use the program, instead you could make an executable. This can be done with the use of pyinstaller. First, install pyinstaller with:
 ```
+pip install pyinstaller
+```
+Then, run the command: 
+```
+pyinstaller --onefile archive_dl_gui.py
+```
+The executable should then be within the `dist` folder in the same directory.
+
+## Potential Issues
+- If the paste button does not work, you need to install xclip and xsel:
+	```
+	sudo apt install xclip xsel
+	```
+- If nothing is downloading, could be that the site is experiencing maintenance.	
