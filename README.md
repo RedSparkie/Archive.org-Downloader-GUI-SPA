@@ -15,8 +15,8 @@ The site https://archive.org/ offers a selection of free books to view and some 
 ![Archive org_DL_GUI](https://user-images.githubusercontent.com/71157556/195441576-e8eb9745-a713-4068-80d1-52f29058dc43.png)
 ## Installation - Linux OS
 
-Python3 is required for this program to work: https://www.python.org/downloads/
-Or a command can be used to install on Debian: 
+Python3 is required for this program to work: https://www.python.org/downloads/ , 
+or a command can be used to install on Debian: 
 ```sh
 sudo apt install python3
 ```
@@ -26,7 +26,7 @@ sudo apt install git
 ```
 
 ### Clone Repository to Directory
-Then you can run the following commands to get the scripts on your computer:
+Then you can run the following commands to get the files on your computer:
 ```sh
 git clone https://github.com/alobeep/Archive.org-Downloader-GUI
 cd Archive.org-Downloader-GUI
