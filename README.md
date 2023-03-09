@@ -64,7 +64,7 @@ De forma adicional, presionando `Archivo` podremos cargar un archivo `.txt` en e
 TODO: Imagen por poner.
   
 ## Creando el ejecutable
-Exclusivo: Este *fork* dispone de un ejecutable ya compilado para Windows de este código a fecha de 09/03/2023. Lo puedes encontrar en [este enlace]([link](https://github.com/RedSparkie/Archive.org-Downloader-GUI-SPA/releases/download/v0.1.0/downloader.exe)).
+Exclusivo: Este *fork* dispone de un ejecutable ya compilado para Windows de este código a fecha de 09/03/2023. Lo puedes encontrar en [este enlace](https://github.com/RedSparkie/Archive.org-Downloader-GUI-SPA/releases/download/v0.1.0/downloader.exe).
 
 Para evitar tener que ejecutar el comando cada vez, puedes crear un ejecutable gracias a la librería pyinstaller, que instalaremos con:
 ```  
