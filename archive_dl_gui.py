@@ -18,9 +18,9 @@ from concurrent import futures
 def load_file():
     filename = ""
     if sys.platform.startswith('linux'):
-        filename = filedialog.askopenfilename(initialdir = "/home", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+        filename = filedialog.askopenfilename(initialdir = "/home", title = "Selecciona un archivo", filetypes = (("Archivos de texto", "*.txt*"), ("Todos los archivos", "*.*")))
     elif sys.platform.startswith('win32'):
-        filename = filedialog.askopenfilename(initialdir = "C:", title = "Select a File", filetypes = (("Text files", "*.txt*"), ("all files", "*.*")))
+        filename = filedialog.askopenfilename(initialdir = "C:", title = "Selecciona un archivo", filetypes = (("Archivos de texto", "*.txt*"), ("Todos los archivos", "*.*")))
     file = open(filename)
     urlText.insert(tk.INSERT, file.read())
 
@@ -35,13 +35,13 @@ def resolution_settings_pressed():
     window.withdraw()
 
     # resolution settings widgets
-    resolutionLabel = tk.Label(top, text="Set resolution settings\n(default: 3)")
+    resolutionLabel = tk.Label(top, text="Establecer resolución\n(predeterminado: 3)")
     resolutionLabel.pack(pady=10, side=tk.TOP)
 
     resolutionEntry = tk.Entry(top, width=25)
     resolutionEntry.pack(pady=5, side=tk.TOP)
 
-    resolutionButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "res_settings", resolutionEntry.get()))
+    resolutionButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "resolución_config", resolutionEntry.get()))
     resolutionButton.pack(pady=5, side=tk.TOP)
 
     top.protocol("WM_DELETE_WINDOW", on_closing)
@@ -53,13 +53,13 @@ def thread_settings_pressed():
     window.withdraw()
 
     # resolution settings widgets
-    threadLabel = tk.Label(top, text="Set thread settings\n(default: 50)")
+    threadLabel = tk.Label(top, text="Establecer intentos\n(predeterminados: 50)")
     threadLabel.pack(pady=10, side=tk.TOP)
 
     threadEntry = tk.Entry(top, width=25)
     threadEntry.pack(pady=5, side=tk.TOP)
 
-    threadButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "thread_settings", threadEntry.get()))
+    threadButton = tk.Button(top, text="Ok", command=lambda:close_window(top, "intentos_config", threadEntry.get()))
     threadButton.pack(pady=5, side=tk.TOP)
 
     top.protocol("WM_DELETE_WINDOW", on_closing)
@@ -68,7 +68,7 @@ def paste_pressed():
     urlText.insert(tk.INSERT, pc.paste())
 
 def download(session, n_threads, directory, links, scale, book_id):
-    print("Downloading pages...")
+    print("Descargando páginas...")
     links = [f"{link}&rotate=0&scale={scale}" for link in links]
 
     tasks = []
@@ -88,14 +88,14 @@ def start_download():
     # get urls from box, remove last character (newline)
     urls = urlText.get("1.0", tk.END+"-1c")
     if not urls:
-        error_msg("URL Error", "No URLs present")
+        error_msg("Error en URL", "URLs no encontradas")
         return
     urls = parse_urls(urls)
 
     # Check the urls format
     for url in urls:
         if not url.startswith("https://archive.org/details/"):
-            error_msg("URL(s) Error", "Invalid URL(s). URL(s) must starts with: \nhttps://archive.org/details/")
+            error_msg("Error en URLs", "URLs inválidas. URLs deben empezar con: \nhttps://archive.org/details/")
             return
 
     # disable window when downloading
@@ -107,22 +107,22 @@ def start_download():
         # login to site
         session = login(emailEntry.get(), passwordEntry.get())
         if session == 1:
-            error_msg("Login Error", "Invalid login credentials")
+            error_msg("Error de login", "Credenciales de login inválidas")
             return
         elif session == 2:
-            error_msg("Login Error", "Error with login")
+            error_msg("Error de login", "Error al conectar")
             return
 
         # get urls
         book_id = list(filter(None, url.split("/")))[-1]
         print("="*40)
-        print(f"Current book: {url}")
+        print(f"Libro actual: {url}")
         session = loan(session, book_id)
 
         # gather book info
         title, links, progressBar['maximum'] = get_book_infos(session, url)
         if title == 1:
-            error_msg("Book Error", "Error while getting image links")
+            error_msg("Error en el libro", "Error al obtener las imágenes")
             return
 
         directory = os.path.join(os.getcwd(), title)
@@ -146,7 +146,7 @@ def start_download():
         return_loan(session, book_id)
 
     # finished download message
-    result = tk.messagebox.askyesno(title="Download", message="Download Complete!\nOpen download location?")
+    result = tk.messagebox.askyesno(title="Descarga", message="¡Descarga completada!\n¿Abrir carpeta de descargas?")
     if result:
         open_dl_location()
 
@@ -170,9 +170,9 @@ def error_msg(title, message):
 # close the pop up window
 def close_window(win, win_specifier, value):
     # save data inputted by user for settings windows
-    if win_specifier == "res_settings":
+    if win_specifier == "resolución_config":
         scale.set(value)
-    elif win_specifier == "thread_settings":
+    elif win_specifier == "intentos_config":
         n_threads.set(value)
 
     window.deiconify()
@@ -187,7 +187,7 @@ def jpg_toggled():
 
 # handles case where user exits program at settings windows
 def on_closing():
-    if messagebox.askokcancel("Exit", "Exit out of program?"):
+    if messagebox.askokcancel("Salir", "¿Cerrar el programa?"):
         window.destroy()
 
 def toggle_win_activity():
@@ -211,7 +211,7 @@ def toggle_win_activity():
 
 # initial window declaration
 window = tk.Tk()
-window.title("Archive.org-DL-GUI")
+window.title("Archive.org-DL-GUI-español")
 window.geometry("600x400")
 
 # download settings variables
@@ -223,21 +223,21 @@ isJPG = tk.BooleanVar(window, False)
 menu = tk.Menu(window)
 
 fileMenuElements = tk.Menu(menu)
-fileMenuElements.add_command(label="Load File", command=load_file)
+fileMenuElements.add_command(label="Cargar archivo", command=load_file)
 fileMenuElements.add_separator()
-fileMenuElements.add_command(label="Exit", command=exit_pressed)
-menu.add_cascade(label="File", menu=fileMenuElements)
+fileMenuElements.add_command(label="Salir", command=exit_pressed)
+menu.add_cascade(label="Archivo", menu=fileMenuElements)
 
 optionsMenuElements = tk.Menu(menu)
-optionsMenuElements.add_checkbutton(label="Toggle JPG Download", command=jpg_toggled)
+optionsMenuElements.add_checkbutton(label="Descargar como JPG", command=jpg_toggled)
 optionsMenuElements.add_separator()
-optionsMenuElements.add_command(label="Download Resolution Settings", command=resolution_settings_pressed)
-optionsMenuElements.add_command(label="Thread Settings", command=thread_settings_pressed)
-menu.add_cascade(label="Options", menu=optionsMenuElements)
+optionsMenuElements.add_command(label="Configuración de resolución de descarga", command=resolution_settings_pressed)
+optionsMenuElements.add_command(label="Configuración de intentos", command=thread_settings_pressed)
+menu.add_cascade(label="Opciones", menu=optionsMenuElements)
 
 helpMenuElements = tk.Menu(menu)
-helpMenuElements.add_command(label="About..")
-menu.add_cascade(label="Help", menu=helpMenuElements)
+helpMenuElements.add_command(label="Sobre el proyecto")
+menu.add_cascade(label="Ayuda", menu=helpMenuElements)
 
 window.config(menu=menu)
 
@@ -246,7 +246,7 @@ loginFrame = tk.LabelFrame(window, text="Login", width=50, height=50)
 loginFrame.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5, ipady=5)
 downloadFrame = tk.Frame(window, width=50, height=50)
 downloadFrame.pack(side=tk.BOTTOM, padx=5, pady=5)
-urlFrame = tk.LabelFrame(window, text="URL(s)", padx=5, pady=5, width=50, height=50)
+urlFrame = tk.LabelFrame(window, text="URLs", padx=5, pady=5, width=50, height=50)
 urlFrame.pack(expand=1, side=tk.BOTTOM, fill=tk.BOTH, padx=5, pady=5)
 
 # logins frame widgets
@@ -254,21 +254,21 @@ emailLabel = tk.Label(loginFrame, text="Email: ")
 emailLabel.pack(side=tk.LEFT)
 emailEntry = tk.Entry(loginFrame, width=30)
 emailEntry.pack(side=tk.LEFT, fill=tk.X)
-passwordLabel = tk.Label(loginFrame, text="  Password: ")
+passwordLabel = tk.Label(loginFrame, text="  Contraseña: ")
 passwordLabel.pack(side=tk.LEFT)
 passwordEntry = tk.Entry(loginFrame, width=30, show="*")
 passwordEntry.pack(side=tk.LEFT, fill=tk.X)
 
 # urls frame widgets
-pasteButton = tk.Button(urlFrame, text="Paste", command=paste_pressed)
+pasteButton = tk.Button(urlFrame, text="Pegar", command=paste_pressed)
 pasteButton.pack(side=tk.LEFT, fill=tk.Y)
 urlText = scrolledtext.ScrolledText(urlFrame, width=40, height=30)
 urlText.pack(expand=1, side=tk.TOP, fill=tk.BOTH)
 
 # download frame widgets
-startButton = tk.Button(downloadFrame, text="Start Download", command=start_download)
+startButton = tk.Button(downloadFrame, text="Empezar descarga", command=start_download)
 startButton.pack(side=tk.LEFT)
-openLocationButton = tk.Button(downloadFrame, text="Open Download Location", command=open_dl_location)
+openLocationButton = tk.Button(downloadFrame, text="Abrir carpeta de descarga", command=open_dl_location)
 openLocationButton.pack(side=tk.LEFT)
 progressBar = ttk.Progressbar(downloadFrame, mode='determinate', orient=tk.HORIZONTAL, length=400)
 progressBar.pack(side=tk.LEFT, fill=tk.X)
