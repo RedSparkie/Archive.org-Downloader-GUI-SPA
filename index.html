@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Descargador de libros</title>
+</head>
+<body>
+	<h1>Descargador de libros</h1>
+	<form method="POST" action="/download">
+		<label for="url">URL del libro:</label><br>
+		<input type="text" id="url" name="url" required><br><br>
+		
+		<label for="email">Correo electrónico:</label><br>
+		<input type="email" id="email" name="email" required><br><br>
+		
+		<label for="password">Contraseña:</label><br>
+		<input type="password" id="password" name="password" required><br><br>
+		
+		<label for="book_id">ID del libro:</label><br>
+		<input type="text" id="book_id" name="book_id" required><br><br>
+		
+		<label for="directory">Directorio de descarga:</label><br>
+		<input type="text" id="directory" name="directory" value="descargas"><br><br>
+		
+		<input type="submit" value="Descargar">
+	</form>
+</body>
+</html>
